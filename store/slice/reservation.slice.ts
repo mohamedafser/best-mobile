@@ -134,7 +134,7 @@ const reservationSlice = createSlice({
     builder.addCase(getReservationDetailsThunk.fulfilled, (state, action) => {
       state.loading = false;
       // Since the API response data is an array of ReservationResponse, we take the first element for reservationDetails
-      state.reservationDetails = action.payload[0] || null;
+      state.reservationDetails = action.payload;
     });
     builder.addCase(
       getReservationDetailsThunk.rejected,

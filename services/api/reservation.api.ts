@@ -1,4 +1,7 @@
-import { ReservationsResponse } from "@/types/reservation.types";
+import {
+  ReservationDetailsResponse,
+  ReservationsResponse,
+} from "@/types/reservation.types";
 import { GET } from "./api";
 
 export const getReservationApi = (data?: { id: string }) => {
@@ -11,5 +14,5 @@ export const getReservationDetailsApi = (data: { id: string }) => {
   const { id } = data;
   const idPath = id ? `/${id}/show` : "";
 
-  return GET<ReservationsResponse>(`/reservations${idPath}`);
+  return GET<ReservationDetailsResponse>(`/reservations${idPath}`);
 };

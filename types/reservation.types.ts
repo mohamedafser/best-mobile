@@ -67,6 +67,7 @@ export interface ReservationResponseRoomPricingFree {
   cashback_amount: number;
   per_night_total: number;
   cashback_percentage: number;
+  coins_redeemed: number;
 }
 
 export interface ReservationResponseRoomPricingGold {
@@ -79,6 +80,7 @@ export interface ReservationResponseRoomPricingGold {
   cashback_amount: number;
   per_night_total: number;
   cashback_percentage: number;
+  coins_redeemed: number;
 }
 
 export interface ReservationResponseRoomPricing {
@@ -1164,6 +1166,7 @@ export interface ReservationResponseOrderRoomRefunds {
   best_refund_amount: number;
   refundable_until_iso: string;
   charge_after_deadline: string;
+  converted_best_refund_amount: string;
 }
 
 export interface ReservationResponseOrderRoomPoliciesCancellationRulesRuleItemCharge {

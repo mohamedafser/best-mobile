@@ -3,7 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { router, Stack } from "expo-router";
 import { TouchableOpacity, useColorScheme } from "react-native";
 
-export default function HotelDetailsLayout() {
+export default function TripDetailsLayout() {
   const colorScheme = useColorScheme();
   return (
     <Stack

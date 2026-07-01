@@ -5,6 +5,7 @@ import { formatCurrency, formatDate } from "@/lib/utils/format";
 import { getReservationThunk } from "@/store/slice/reservation.slice";
 import { ReservationResponse } from "@/types/reservation.types";
 import { MaterialIcons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -28,6 +29,7 @@ const TripCard = ({
   image,
   status,
   isCancelled = false,
+  id,
 }: any) => {
   const colorScheme = useColorScheme();
   return (
@@ -46,6 +48,7 @@ const TripCard = ({
         backgroundColor: Colors[colorScheme as "dark" | "light"]?.surfaceCard,
         borderColor: Colors[colorScheme as "dark" | "light"]?.gray400,
       }}
+      onPress={() => router.push(`/trip-details/${id}`)}
     >
       {/* Image Container */}
       <View
@@ -219,7 +222,7 @@ const MyTripsScreen = () => {
 
   if (loading) {
     return (
-      <View className="flex-1 bg-[#181B22] justify-center items-center">
+      <View className="flex-1 bg-white justify-center items-center">
         <ActivityIndicator size="large" color="#0066ff" />
       </View>
     );
@@ -313,7 +316,9 @@ const MyTripsScreen = () => {
                         key={item.uuid}
                         title={item.order?.hotel?.name || "Stay"}
                         date={dateStr}
-                        guests={item.room?.guests?.adults ?? item.params?.adults ?? 1}
+                        guests={
+                          item.room?.guests?.adults ?? item.params?.adults ?? 1
+                        }
                         rooms={item.params?.roomQuantity ?? 1}
                         price={priceStr}
                         status={
@@ -325,6 +330,7 @@ const MyTripsScreen = () => {
                         }
                         isCancelled={item.is_cancelled}
                         image={imageUrl}
+                        id={item?.uuid}
                       />
                     );
                   })
