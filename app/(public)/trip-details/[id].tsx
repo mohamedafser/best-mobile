@@ -1,6 +1,5 @@
 import BookingRefundCard from "@/components/booking-refund-card";
 import AppModal from "@/components/common/app-modal";
-import MapSection from "@/components/map-section";
 import {
   BookingDetailsSection,
   CancellationSection,
@@ -120,7 +119,8 @@ export default function BookingDetailsScreen() {
     );
   }
   // TODO: use `id` to fetch the reservation details (e.g. dispatch a thunk)
-  console.log("trip id:", id, reservationDetails);
+  // console.log("trip id:", id, reservationDetails);
+
   return (
     <ScrollView className="flex-1 bg-white">
       <View className="px-5 pt-5 pb-10">
@@ -186,19 +186,22 @@ export default function BookingDetailsScreen() {
           reservationDetails={reservationDetails}
         />
         <Divider />
-        {reservationDetails?.order?.tariff_notes && (
-          <TariffNotesSection
-            notes={reservationDetails?.order?.tariff_notes?.messages?.[0]}
-          />
-        )}
-        <Divider />
+        {reservationDetails?.order?.tariff_notes &&
+          reservationDetails?.order?.tariff_notes?.messages?.length > 0 && (
+            <>
+              <TariffNotesSection
+                notes={reservationDetails?.order?.tariff_notes?.messages?.[0]}
+              />
+              <Divider />
+            </>
+          )}
 
-        <MapSection
+        {/* <MapSection
           lat={reservationDetails?.order?.hotel?.location?.latitude as number}
           long={reservationDetails?.order?.hotel?.location?.longitude as number}
           hotelName={reservationDetails?.order?.hotel?.name || ""}
         />
-        <Divider />
+        <Divider /> */}
 
         <SupportSection />
       </View>

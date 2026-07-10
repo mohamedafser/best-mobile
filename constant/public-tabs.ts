@@ -4,31 +4,46 @@ export const PUBLIC_TABS: TabItem[] = [
   {
     name: "explore",
     label: "Explore",
-    iconFocused: "house.fill",
-    iconUnfocused: "house",
+    iosIconFocused: "house.fill",
+    iosIconUnfocused: "house",
+
+    androidIconUnfocused: "home",
+    androidIconFocused: "home",
   },
   {
     name: "trips",
     label: "Trips",
-    iconFocused: "airplane",
-    iconUnfocused: "airplane",
+    iosIconFocused: "airplane",
+    iosIconUnfocused: "airplane",
+
+    androidIconUnfocused: "flight",
+    androidIconFocused: "flight",
   },
   {
     name: "wallet",
     label: "Wallet",
-    iconFocused: "dollarsign.circle.fill",
-    iconUnfocused: "dollarsign.circle",
+    iosIconFocused: "dollarsign.circle.fill",
+    iosIconUnfocused: "dollarsign.circle",
+
+    androidIconUnfocused: "wallet",
+    androidIconFocused: "wallet",
   },
   {
     name: "referral",
     label: "Referral",
-    iconFocused: "gift.fill",
-    iconUnfocused: "gift",
+    iosIconFocused: "gift.fill",
+    iosIconUnfocused: "gift",
+
+    androidIconUnfocused: "star",
+    androidIconFocused: "star",
   },
   {
     name: "my-space",
     label: "My Space",
-    iconFocused: "person.crop.circle.fill",
-    iconUnfocused: "person.crop.circle",
+    iosIconFocused: "person.crop.circle.fill",
+    iosIconUnfocused: "person.crop.circle",
+
+    androidIconUnfocused: "person",
+    androidIconFocused: "person",
   },
 ];

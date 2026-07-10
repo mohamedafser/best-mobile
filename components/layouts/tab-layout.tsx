@@ -1,12 +1,16 @@
 import { NativeTabs } from "expo-router/unstable-native-tabs";
-import { useColorScheme } from "react-native";
+import { Platform, useColorScheme } from "react-native";
 
 export type TabItem = {
   name: string;
-  iconFocused: string;
-  iconUnfocused: string;
   label?: string;
   hidden?: boolean;
+
+  iosIconFocused: string;
+  iosIconUnfocused: string;
+
+  androidIconFocused: string;
+  androidIconUnfocused: string;
 };
 
 type Props = {
@@ -16,14 +20,33 @@ type Props = {
 export default function TabLayout({ tabs }: Props) {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
+  const isAndroid = Platform.OS === "android";
 
   return (
     <NativeTabs
       backgroundColor={isDark ? "#0f172a" : "#ffffff"}
-      indicatorColor={isDark ? "#60a5fa" : "#2563eb"}
+      indicatorColor={isDark ? "#60a5fa" : "#000000"}
+      tintColor={
+        isAndroid
+          ? isDark
+            ? "#60a5fa"
+            : "#fff"
+          : isDark
+            ? "#60a5fa"
+            : "#2563eb"
+      }
       labelStyle={{
         selected: {
-          color: isDark ? "#60a5fa" : "#2563eb",
+          color: isAndroid
+            ? isDark
+              ? "#60a5fa"
+              : "#000"
+            : isDark
+              ? "#60a5fa"
+              : "#2563eb",
+        },
+        default: {
+          color: isDark ? "#94a3b8" : "#000000",
         },
       }}
     >
@@ -31,11 +54,18 @@ export default function TabLayout({ tabs }: Props) {
         .filter((tab) => !tab.hidden)
         .map((tab) => (
           <NativeTabs.Trigger key={tab.name} name={tab.name}>
-            <NativeTabs.Trigger.Label>{tab.label}</NativeTabs.Trigger.Label>
+            <NativeTabs.Trigger.Label>
+              {tab.label ?? tab.name}
+            </NativeTabs.Trigger.Label>
+
             <NativeTabs.Trigger.Icon
               sf={{
-                default: tab.iconUnfocused,
-                selected: tab.iconFocused,
+                default: tab.iosIconUnfocused,
+                selected: tab.iosIconFocused,
+              }}
+              md={{
+                default: tab.androidIconUnfocused,
+                selected: tab.androidIconFocused,
               }}
             />
           </NativeTabs.Trigger>
