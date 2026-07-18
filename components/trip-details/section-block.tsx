@@ -1,6 +1,7 @@
-import { Colors } from "@/constants/theme";
 import React from "react";
-import { Text, useColorScheme, View } from "react-native";
+import { Text, View } from "react-native";
+
+import { useThemeColors } from "@/hooks/use-theme-colors";
 
 type SectionBlockProps = {
   title: string;
@@ -8,15 +9,11 @@ type SectionBlockProps = {
 };
 
 export const SectionBlock = ({ title, children }: SectionBlockProps) => {
-  const colorScheme = useColorScheme();
-  const c = Colors[colorScheme as "dark" | "light"];
+  const C = useThemeColors();
 
   return (
     <View>
-      <Text
-        className="text-base font-bold mb-4"
-        style={{ color: c.gray900 }}
-      >
+      <Text className="text-base font-bold mb-4" style={{ color: C.text }}>
         {title}
       </Text>
       {children}

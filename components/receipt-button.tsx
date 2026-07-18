@@ -1,8 +1,10 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Text, TouchableOpacity } from "react-native";
+import { TouchableOpacity, useColorScheme } from "react-native";
 
+import { Colors } from "@/constants/theme";
 import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
+import { ThemedText } from "./themed-text";
 
 const formatCurrency = (amount?: number, currency = "USD") => {
   if (amount == null) return "";
@@ -210,20 +212,24 @@ const ReceiptButton = ({
 }: {
   className?: string;
   data: any;
-}) => (
-  <TouchableOpacity
-    className={`flex-row items-center rounded-full border border-zinc-900 px-4 py-2 ${className}`}
-    onPress={() => downloadReceiptPdf(data)}
-  >
-    <MaterialCommunityIcons
-      name="receipt-text-outline"
-      size={18}
-      color="#111"
-    />
-    <Text className="ml-2 text-sm font-semibold text-zinc-950">
-      Get Receipt
-    </Text>
-  </TouchableOpacity>
-);
+}) => {
+  const colorScheme = useColorScheme();
+  return (
+    <TouchableOpacity
+      className={`flex-row items-center rounded-full border px-4 py-2 ${className}`}
+      onPress={() => downloadReceiptPdf(data)}
+      style={{ borderColor: Colors[colorScheme as "dark" | "light"].gray100 }}
+    >
+      <MaterialCommunityIcons
+        name="receipt-text-outline"
+        size={18}
+        color={Colors[colorScheme as "dark" | "light"].gray100}
+      />
+      <ThemedText className="ml-2 text-sm font-semibold ">
+        Get Receipt
+      </ThemedText>
+    </TouchableOpacity>
+  );
+};
 
 export default ReceiptButton;

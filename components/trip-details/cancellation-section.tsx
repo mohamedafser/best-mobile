@@ -1,5 +1,5 @@
-import { Text } from "react-native";
 import ReceiptButton from "../receipt-button";
+import { ThemedText } from "../themed-text";
 import { SectionBlock } from "./section-block";
 
 type CancellationSectionProps = {
@@ -9,9 +9,9 @@ type CancellationSectionProps = {
 
 const CancellationSection = (props: CancellationSectionProps) => (
   <SectionBlock title="Cancellation policy">
-    <Text className="text-sm leading-6 text-zinc-950 mb-5">
+    <ThemedText className="text-sm leading-6 mb-5">
       {props.cancellationPolicyText}
-    </Text>
+    </ThemedText>
 
     <ReceiptButton
       className="self-start mb-5"

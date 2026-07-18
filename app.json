@@ -8,6 +8,7 @@
     "scheme": "bestmobile",
     "userInterfaceStyle": "automatic",
     "ios": {
+      "buildNumber": "5",
       "supportsTablet": true,
       "bundleIdentifier": "com.mdafser.bestmobile",
       "infoPlist": {
@@ -48,7 +49,28 @@
       "expo-status-bar",
       "expo-web-browser",
       "expo-asset",
-      "expo-sharing"
+      "expo-sharing",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "extraPods": [
+              {
+                "name": "GoogleUtilities",
+                "modular_headers": true
+              },
+              {
+                "name": "RecaptchaInterop",
+                "modular_headers": true
+              },
+              {
+                "name": "AppCheckCore",
+                "modular_headers": true
+              }
+            ]
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

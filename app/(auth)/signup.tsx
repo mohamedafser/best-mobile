@@ -66,8 +66,6 @@ const SignupScreen = (): React.JSX.Element => {
           terms_accepted: data.termsAccepted,
         }),
       ).unwrap();
-
-      router.replace("/(public)" as any);
     } catch (error) {
       console.log(error);
     }

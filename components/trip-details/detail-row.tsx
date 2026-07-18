@@ -1,5 +1,6 @@
-import { Colors } from "@/constants/theme";
-import { Text, useColorScheme, View } from "react-native";
+import { Text, View } from "react-native";
+
+import { useThemeColors } from "@/hooks/use-theme-colors";
 
 type DetailRowProps = {
   label: string;
@@ -7,18 +8,14 @@ type DetailRowProps = {
 };
 
 export const DetailRow = ({ label, value }: DetailRowProps) => {
-  const colorScheme = useColorScheme();
-  const c = Colors[colorScheme as "dark" | "light"];
+  const C = useThemeColors();
 
   return (
     <View className="w-1/2 mb-5">
-      <Text
-        className="text-xs font-semibold mb-2"
-        style={{ color: c.brand500 }}
-      >
+      <Text className="text-xs font-semibold mb-2" style={{ color: C.brand500 }}>
         {label}
       </Text>
-      <Text className="text-sm font-medium" style={{ color: c.gray900 }}>
+      <Text className="text-sm font-medium" style={{ color: C.text }}>
         {value}
       </Text>
     </View>

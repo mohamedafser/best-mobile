@@ -1,7 +1,8 @@
 import { Feather } from "@expo/vector-icons";
-import { Image, Text, View } from "react-native";
+import { Image, View } from "react-native";
 import Address, { Contact } from "../address";
 import AppCarousel from "../common/app-carousel";
+import { ThemedText } from "../themed-text";
 
 type HotelSummaryCardProps = {
   images: any[];
@@ -29,7 +30,7 @@ const HotelSummaryCard = ({
     />
     <View className="ml-4 flex-1">
       <View className="flex-row justify-between">
-        <Text className="text-base font-bold text-zinc-950">{title}</Text>
+        <ThemedText className="text-base font-bold">{title}</ThemedText>
         <Feather name="share-2" size={20} color="#111" />
       </View>
 

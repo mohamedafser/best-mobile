@@ -46,8 +46,6 @@ const SigninScreen = (): React.JSX.Element => {
           password,
         }),
       ).unwrap();
-
-      router.replace("/(public)" as any);
     } catch (error) {
       console.log(error);
     }

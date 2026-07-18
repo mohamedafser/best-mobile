@@ -1,4 +1,4 @@
-import { Colors } from "@/constants/theme";
+import { useThemeColors } from "@/hooks/use-theme-colors";
 import { useAppSelector } from "@/hooks/redux";
 import React from "react";
 import { ActivityIndicator, View } from "react-native";
@@ -19,13 +19,15 @@ export default function ProfileHeader({
   className = "",
   children,
 }: ProfileHeaderProps) {
+  const C = useThemeColors();
   const { loading, error, userProfile } = useAppSelector(
     (state) => state.userProfile,
   );
+
   if (loading)
     return (
       <ThemedView className="flex items-center justify-center py-4">
-        <ActivityIndicator size={16} color={Colors.light.text} />
+        <ActivityIndicator size={16} color={C.text} />
       </ThemedView>
     );
   if (error)
@@ -44,7 +46,7 @@ export default function ProfileHeader({
 
       <ThemedText className="mt-4 text-xl font-semibold">{`${userProfile?.first_name} ${userProfile?.last_name}`}</ThemedText>
 
-      <ThemedText className="mt-1 text-sm text-neutral-500">
+      <ThemedText className="mt-1 text-sm" style={{ color: C.textMuted }}>
         {userProfile?.email}
       </ThemedText>
 

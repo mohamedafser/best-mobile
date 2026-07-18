@@ -23,7 +23,7 @@ interface ButtonProps extends TouchableOpacityProps {
 
 const variantStyles = {
   primary: {
-    container: "bg-blue-600",
+    container: "bg-[#ff7a45]",
     text: "text-white",
   },
   secondary: {

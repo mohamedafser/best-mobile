@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-
+import { SafeAreaView } from "react-native-safe-area-context";
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 // --- Types ---
@@ -52,10 +52,20 @@ const HotelDetailsScreen: React.FC = () => {
   const [selectedRoom, setSelectedRoom] = useState("1");
 
   return (
-    <View className="flex-1 bg-[#fffbf9]">
-      <StatusBar barStyle="dark-content" />
+    <SafeAreaView edges={["top"]} className="flex-1 bg-[#fffbf9]">
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor="#fffbf9"
+        translucent={false}
+      />
 
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+      <ScrollView
+        className="flex-1"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingBottom: 160,
+        }}
+      >
         {/* Gallery Section */}
         <View className="relative h-[350px]">
           <FlatList
@@ -255,7 +265,7 @@ const HotelDetailsScreen: React.FC = () => {
           </Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

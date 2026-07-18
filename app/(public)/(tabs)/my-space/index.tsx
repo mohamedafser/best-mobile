@@ -23,9 +23,9 @@ export default function MySpaceScreen() {
       contentContainerStyle={{
         paddingTop: 65,
         paddingBottom: 48,
-        backgroundColor: C.surfacePage,
         flexGrow: 1,
       }}
+      style={{ backgroundColor: C.surfacePage }}
       showsVerticalScrollIndicator={false}
     >
       {/* Profile Header */}

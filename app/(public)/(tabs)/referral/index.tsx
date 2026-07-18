@@ -2,10 +2,13 @@ import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Image, ScrollView, Text, View } from "react-native";
+import { Image, ScrollView, Text, useColorScheme, View } from "react-native";
 
+import { ThemedText } from "@/components/themed-text";
+import { ThemedView } from "@/components/themed-view";
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
+import { Colors } from "@/constants/theme";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import { showErrorToast } from "@/lib/utils/toast";
 import {
@@ -43,7 +46,7 @@ const InviteEarnScreen: React.FC = () => {
     (state) => state.referrals,
   );
   const dispatch = useAppDispatch();
-
+  const colorScheme = useColorScheme();
   const {
     control,
     handleSubmit,
@@ -76,7 +79,7 @@ const InviteEarnScreen: React.FC = () => {
     }, 5000);
   };
   return (
-    <View className="flex-1 bg-[#fff8f6]">
+    <ThemedView className="flex-1">
       <ScrollView className="flex-1 px-5" showsVerticalScrollIndicator={false}>
         {/* Hero Image Section */}
         <View className="mt-6 relative h-64 w-full rounded-3xl overflow-hidden shadow-sm">
@@ -85,7 +88,13 @@ const InviteEarnScreen: React.FC = () => {
             className="w-full h-full"
             resizeMode="cover"
           />
-          <View className="absolute bottom-4 left-4 right-4 bg-white/90 p-4 rounded-2xl flex-row items-center shadow-md">
+          <View
+            className="absolute bottom-4 left-4 right-4 p-4 rounded-2xl flex-row items-center shadow-md"
+            style={{
+              backgroundColor:
+                Colors[colorScheme as "dark" | "light"].surfacePage,
+            }}
+          >
             <View className="bg-[#fd8363] p-2 rounded-full mr-3">
               <MaterialIcons name="workspace-premium" size={24} color="white" />
             </View>
@@ -105,14 +114,18 @@ const InviteEarnScreen: React.FC = () => {
           <Text className="text-3xl font-bold text-[#a73a05] mb-2 leading-tight">
             Win Cashback with Friends
           </Text>
-          <Text className="text-base text-[#4d4743] leading-6">
+          <ThemedText className="text-base text-[#4d4743] leading-6">
             Earn 1000 coins when your friend accepts your referral — and they’ll
             get 1000 coins too.
-          </Text>
+          </ThemedText>
         </View>
 
         {/* Referral Box */}
-        <View className="mt-8 mb-4 bg-white p-6 rounded-2xl border border-[#f5eeeb] shadow-sm">
+        <ThemedView
+          className="mt-8 mb-4  p-6 rounded-2xl shadow-sm"
+          lightColor={Colors.light.surfaceCard}
+          darkColor={Colors.dark.surfaceCard}
+        >
           <Controller
             control={control}
             name="email"
@@ -143,7 +156,7 @@ const InviteEarnScreen: React.FC = () => {
               </Text>
             </View>
           )}
-        </View>
+        </ThemedView>
 
         {/* Action Button */}
         <Button
@@ -155,9 +168,9 @@ const InviteEarnScreen: React.FC = () => {
 
         {/* Steps Section */}
         <View className="mt-12 mb-24">
-          <Text className="text-2xl font-bold text-[#251915] mb-6">
+          <ThemedText className="mb-6" type="2XlBold">
             How it Works
-          </Text>
+          </ThemedText>
 
           <StepCard
             number="1"
@@ -179,7 +192,7 @@ const InviteEarnScreen: React.FC = () => {
           />
         </View>
       </ScrollView>
-    </View>
+    </ThemedView>
   );
 };
 
@@ -190,18 +203,24 @@ const StepCard: React.FC<StepCardProps> = ({
   title,
   desc,
 }) => (
-  <View className="bg-white p-6 rounded-2xl border border-[#f5eeeb] mb-4 flex-row items-start">
+  <ThemedView
+    className="p-6 rounded-2xl mb-4 flex-row items-start"
+    lightColor={Colors.light.surfaceSoft}
+    darkColor={Colors.dark.surfaceSoft}
+  >
     <View className="w-10 h-10 bg-[#f5ded6] rounded-full items-center justify-center mr-4">
       <Text className="text-[#a73a05] font-bold">{number}</Text>
     </View>
     <View className="flex-1">
       <View className="flex-row items-center mb-1">
         <MaterialIcons name={iconName} size={20} color={COLORS.primary} />
-        <Text className="ml-2 text-lg font-bold text-[#251915]">{title}</Text>
+        <Text className="ml-2 text-lg font-bold light:text-[#251915] dark:text-white">
+          {title}
+        </Text>
       </View>
       <Text className="text-[#4d4743] text-sm leading-5">{desc}</Text>
     </View>
-  </View>
+  </ThemedView>
 );
 
 export default InviteEarnScreen;

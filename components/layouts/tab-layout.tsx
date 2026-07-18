@@ -1,5 +1,7 @@
 import { NativeTabs } from "expo-router/unstable-native-tabs";
-import { Platform, useColorScheme } from "react-native";
+import { Platform } from "react-native";
+
+import { useThemeColors } from "@/hooks/use-theme-colors";
 
 export type TabItem = {
   name: string;
@@ -18,35 +20,20 @@ type Props = {
 };
 
 export default function TabLayout({ tabs }: Props) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === "dark";
+  const C = useThemeColors();
   const isAndroid = Platform.OS === "android";
 
   return (
     <NativeTabs
-      backgroundColor={isDark ? "#0f172a" : "#ffffff"}
-      indicatorColor={isDark ? "#60a5fa" : "#000000"}
-      tintColor={
-        isAndroid
-          ? isDark
-            ? "#60a5fa"
-            : "#fff"
-          : isDark
-            ? "#60a5fa"
-            : "#2563eb"
-      }
+      backgroundColor={C.tabBar}
+      indicatorColor={C.tabBarActive}
+      tintColor={isAndroid ? "#ffffff" : C.tabBarTint}
       labelStyle={{
         selected: {
-          color: isAndroid
-            ? isDark
-              ? "#60a5fa"
-              : "#000"
-            : isDark
-              ? "#60a5fa"
-              : "#2563eb",
+          color: C.tabBarActive,
         },
         default: {
-          color: isDark ? "#94a3b8" : "#000000",
+          color: C.tabBarInactive,
         },
       }}
     >

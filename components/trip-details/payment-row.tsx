@@ -1,5 +1,6 @@
-import { Colors } from "@/constants/theme";
-import { Text, useColorScheme, View } from "react-native";
+import { Text, View } from "react-native";
+
+import { useThemeColors } from "@/hooks/use-theme-colors";
 
 type PaymentRowProps = {
   label: string;
@@ -12,19 +13,18 @@ export const PaymentRow = ({
   value,
   valueStyle = "default",
 }: PaymentRowProps) => {
-  const colorScheme = useColorScheme();
-  const c = Colors[colorScheme as "dark" | "light"];
+  const C = useThemeColors();
 
   const valueColor =
     valueStyle === "success"
-      ? c.success600
+      ? C.success500
       : valueStyle === "muted"
-        ? c.gray600
-        : c.gray900;
+        ? C.textMuted
+        : C.text;
 
   return (
     <View className="flex-row justify-between mb-3">
-      <Text className="text-sm" style={{ color: c.gray600 }}>
+      <Text className="text-sm" style={{ color: C.textMuted }}>
         {label}
       </Text>
       <Text className="text-sm font-medium" style={{ color: valueColor }}>

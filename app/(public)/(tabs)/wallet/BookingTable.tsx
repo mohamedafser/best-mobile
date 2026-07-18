@@ -1,3 +1,4 @@
+import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import Chip from "@/components/ui/chip";
 import Tooltip from "@/components/ui/tooltip";
@@ -28,9 +29,9 @@ const TOOLTIP_TEXT = "WALLET_TEXTS.TABLE.COINS_CONFIRM_TOOLTIP";
 const BookingInfo = ({ trans }: { trans: WalletTransaction }) => (
   <View className="flex-row items-start gap-3">
     <View className="flex-1">
-      <Text className="text-sm font-semibold text-gray-900">
+      <ThemedText className="text-sm font-semibold">
         {trans?.title ?? (trans?.meta as any)?.details?.name ?? ""}
-      </Text>
+      </ThemedText>
 
       {!!trans.booking_code && (
         <Text className="mt-1 text-[11px] text-gray-500">
@@ -57,7 +58,7 @@ const Row = ({
   children: React.ReactNode;
 }) => (
   <View className="flex-row items-center justify-between">
-    <Text className="text-sm font-medium text-gray-900">{label}</Text>
+    <ThemedText className="text-sm font-medium">{label}</ThemedText>
     {children}
   </View>
 );
@@ -90,11 +91,11 @@ export default function BookingCard({ trans }: BookingCardProps) {
         </Row>
 
         <Row label="Booking Amount">
-          <Text className="text-sm text-gray-900">
+          <ThemedText className="text-sm font-bold">
             {!trans.amount
               ? "NA"
               : amountWithCurrency(formatToPercentage(trans.amount, 2))}
-          </Text>
+          </ThemedText>
         </Row>
 
         <Row label="Action">
@@ -115,11 +116,11 @@ export default function BookingCard({ trans }: BookingCardProps) {
         </Row>
 
         <Row label="Coins Earned">
-          <Text className="text-sm font-medium text-gray-900">
+          <ThemedText className="text-sm font-bold">
             {formatCurrency(formatToPercentage(trans.coins), "", {
               hideCurrency: true,
             })}
-          </Text>
+          </ThemedText>
         </Row>
       </View>
     </ThemedView>

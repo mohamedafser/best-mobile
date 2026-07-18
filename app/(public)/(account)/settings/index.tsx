@@ -2,27 +2,34 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import ThemeToggle from "@/components/ui/toggle-theme";
 import { Colors } from "@/constants/theme";
-import { Platform, useColorScheme } from "react-native";
+import { useColorScheme } from "@/hooks/use-color-scheme";
+import { View } from "react-native";
 
 const Settings = () => {
   const colorScheme = useColorScheme();
   const C = Colors[colorScheme as "dark" | "light"];
+
   return (
     <ThemedView
-      className="flex-1 pt-6 px-4"
+      className="flex-1 px-4"
       style={{
-        paddingTop: Platform.OS === "android" ? 65 : 75,
+        paddingTop: 20,
         backgroundColor: C.surfacePage,
       }}
     >
       <ThemedView
-        className="flex-row items-center justify-between rounded-xl px-4 py-4"
+        className="rounded-xl px-4 py-4"
         lightColor={Colors.light.surfaceCard}
         darkColor={Colors.dark.surfaceCard}
       >
-        <ThemedText>Dark Mode</ThemedText>
+        <ThemedText className="text-base font-semibold">Appearance</ThemedText>
+        <ThemedText className="mt-1 text-sm" style={{ color: C.gray600 }}>
+          Choose light, dark, or match your device settings.
+        </ThemedText>
 
-        <ThemeToggle />
+        <View className="mt-4">
+          <ThemeToggle />
+        </View>
       </ThemedView>
     </ThemedView>
   );

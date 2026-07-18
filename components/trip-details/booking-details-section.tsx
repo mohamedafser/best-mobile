@@ -1,4 +1,5 @@
 import { Text, View } from "react-native";
+import { ThemedText } from "../themed-text";
 import { DetailRow } from "./detail-row";
 import { SectionBlock } from "./section-block";
 
@@ -18,7 +19,7 @@ const BookingDetailsSection = (props: BookingDetailsSectionProps) => {
         <Text className="text-xs font-semibold text-orange-600 mb-2">
           Name on the Reservation
         </Text>
-        <Text className="text-sm text-zinc-950">{name}</Text>
+        <ThemedText type="2XlBold">{name}</ThemedText>
       </View>
 
       <View className="flex-row flex-wrap mt-5">

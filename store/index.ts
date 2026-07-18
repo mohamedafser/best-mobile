@@ -9,6 +9,7 @@ import countriesReducer from "./slice/countries-slice";
 import onboardingReducer from "./slice/onboarding-slice";
 import referralsReducer from "./slice/referrals.slice";
 import reservationReducer from "./slice/reservation.slice";
+import themeReducer from "./slice/theme-slice";
 import updateUserReducer from "./slice/update-user.slice";
 import userProfileReducer from "./slice/user-profile.slice";
 import walletReducer from "./slice/wallet.slice";
@@ -22,6 +23,7 @@ const rootReducer = combineReducers({
   wallet: walletReducer,
   referrals: referralsReducer,
   reservation: reservationReducer,
+  theme: themeReducer,
 });
 
 const migrations: any = {
@@ -43,7 +45,7 @@ const persistConfig = {
 
   migrate: createMigrate(migrations, { debug: false }),
 
-  whitelist: ["auth"],
+  whitelist: ["auth", "theme"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

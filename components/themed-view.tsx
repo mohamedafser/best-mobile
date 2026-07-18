@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { View, ViewProps } from "react-native";
 
@@ -8,8 +9,8 @@ export type ThemedViewProps = ViewProps & {
 };
 
 export function ThemedView({
-  lightColor,
-  darkColor,
+  lightColor = Colors.light.surfacePage,
+  darkColor = Colors.dark.surfacePage,
   className = "",
   style,
   ...props

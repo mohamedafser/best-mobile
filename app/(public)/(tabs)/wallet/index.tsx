@@ -122,7 +122,7 @@ export default function WalletScreen() {
             }}
             onPress={() => setSelectedTab(tab)}
           >
-            <Text style={{ color: C.gray700 }}>{tab}</Text>
+            <Text style={{ color: C.gray200 }}>{tab}</Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
@@ -164,8 +164,8 @@ export default function WalletScreen() {
       contentContainerStyle={{
         padding: 16,
         paddingTop: 65,
-        backgroundColor: C.surfacePage,
       }}
+      style={{ backgroundColor: C.surfacePage }}
       showsVerticalScrollIndicator={false}
       ListHeaderComponent={ListHeader}
       ListFooterComponent={ListFooter}

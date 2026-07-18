@@ -20,17 +20,25 @@
     },
     "preview": {
       "distribution": "internal",
+      "autoIncrement": true,
       "ios": {
         "image": "macos-sequoia-15.6-xcode-26.2"
       }
     },
     "production": {
+      "autoIncrement": true,
       "ios": {
         "image": "macos-sequoia-15.6-xcode-26.2"
       }
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "ascApiKeyPath": "./credentials/AuthKey_ABC123XYZ.p8",
+        "ascApiKeyId": "ABC123XYZ",
+        "ascApiKeyIssuerId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+      }
+    }
   }
 }

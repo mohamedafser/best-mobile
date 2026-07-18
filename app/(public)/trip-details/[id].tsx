@@ -1,5 +1,7 @@
 import BookingRefundCard from "@/components/booking-refund-card";
 import AppModal from "@/components/common/app-modal";
+import { ThemedText } from "@/components/themed-text";
+import { ThemedView } from "@/components/themed-view";
 import {
   BookingDetailsSection,
   CancellationSection,
@@ -18,7 +20,8 @@ import { getReservationDetailsThunk } from "@/store/slice/reservation.slice";
 import { differenceInCalendarDays, isAfter, parse } from "date-fns";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, ScrollView, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const Divider = () => <View className="h-px bg-zinc-200 my-6" />;
 
@@ -39,6 +42,8 @@ export default function BookingDetailsScreen() {
   const { reservationDetails, loading, error } = useAppSelector(
     (state) => state.reservation,
   );
+  const insets = useSafeAreaInsets();
+
   const dispatch = useAppDispatch();
   const [open, setOpen] = useState(false);
   const { amountWithCurrency } = useCurrency();
@@ -122,124 +127,126 @@ export default function BookingDetailsScreen() {
   // console.log("trip id:", id, reservationDetails);
 
   return (
-    <ScrollView className="flex-1 bg-white">
-      <View className="px-5 pt-5 pb-10">
-        <View className="flex-row items-center mb-4">
-          <Text className="text-2xl font-bold text-zinc-950 capitalize">
-            {reservationDetails?.order?.hotel?.name.toLowerCase()}
-          </Text>
-        </View>
+    <ScrollView className="flex-1">
+      <ThemedView>
+        <View className="px-5 pt-5 pb-10">
+          <View className="flex-row items-center mb-4">
+            <ThemedText className="capitalize" type="2XlBold">
+              {reservationDetails?.order?.hotel?.name.toLowerCase()}
+            </ThemedText>
+          </View>
 
-        <Text className="text-base leading-6 text-zinc-900 mb-5">
-          We are pleased to inform you that your reservation request has been
-          received and confirmed!
-        </Text>
+          <ThemedText className="text-base leading-6  mb-5">
+            We are pleased to inform you that your reservation request has been
+            received and confirmed!
+          </ThemedText>
 
-        <Divider />
+          <Divider />
 
-        <BookingDetailsSection
-          name={`${reservationDetails?.order?.booked_by?.first_name} ${reservationDetails?.order?.booked_by?.last_name}`}
-          tripStart={
-            reservationDetails?.order?.booking_details?.trip_start || ""
-          }
-          tripEnd={reservationDetails?.order?.booking_details?.trip_end || ""}
-          guest={reservationDetails?.order?.booking_details?.guest || ""}
-          reservationRoomType={
-            reservationDetails?.order?.booking_details?.reservation_room_type ||
-            ""
-          }
-        />
-        <Divider />
-        <PaymentCard
-          // HOTEL INFO
-          images={reservationDetails?.order?.hotel?.images || []}
-          title={reservationDetails?.order?.hotel?.name || ""}
-          address={reservationDetails?.order?.hotel?.contact as any}
-          // PAYMENT INFO
-          pnr={reservationDetails?.order?.pnr || ""}
-          date={reservationDetails?.order?.payment_details?.date || ""}
-          paymentMethod={
-            reservationDetails?.order?.payment_details?.payment_method || ""
-          }
-          paidVia={`${
-            reservationDetails?.order?.payment_details?.paid_card_brand || ""
-          } **** ${reservationDetails?.order?.payment_details?.paid_via || ""}`}
-          paymentStatus={paymentStatus || ""}
-          total={`${amountWithCurrency(totalAmount)}`}
-          tax={`${amountWithCurrency(
-            reservationDetails?.order?.room?.pricing?.free?.tax,
-          )}`}
-          roomPrice={`${amountWithCurrency(
-            reservationDetails?.order?.room?.pricing?.free?.selling_price,
-          )}`}
-          reservationRoomType={`${reservationDetails?.params?.roomQuantity || ""} Room x ${nights} Nights`}
-          // RECEIPT DATA
-          reservationDetails={reservationDetails}
-          onPressCancelBtn={() => setOpen(true)}
-          showCancelBtn={isRefundableDateExpired}
-        />
-        <Divider />
-        <CancellationSection
-          cancellationPolicyText={
-            reservationDetails?.room?.refunds?.description || ""
-          }
-          reservationDetails={reservationDetails}
-        />
-        <Divider />
-        {reservationDetails?.order?.tariff_notes &&
-          reservationDetails?.order?.tariff_notes?.messages?.length > 0 && (
-            <>
-              <TariffNotesSection
-                notes={reservationDetails?.order?.tariff_notes?.messages?.[0]}
-              />
-              <Divider />
-            </>
-          )}
+          <BookingDetailsSection
+            name={`${reservationDetails?.order?.booked_by?.first_name} ${reservationDetails?.order?.booked_by?.last_name}`}
+            tripStart={
+              reservationDetails?.order?.booking_details?.trip_start || ""
+            }
+            tripEnd={reservationDetails?.order?.booking_details?.trip_end || ""}
+            guest={reservationDetails?.order?.booking_details?.guest || ""}
+            reservationRoomType={
+              reservationDetails?.order?.booking_details
+                ?.reservation_room_type || ""
+            }
+          />
+          <Divider />
+          <PaymentCard
+            // HOTEL INFO
+            images={reservationDetails?.order?.hotel?.images || []}
+            title={reservationDetails?.order?.hotel?.name || ""}
+            address={reservationDetails?.order?.hotel?.contact as any}
+            // PAYMENT INFO
+            pnr={reservationDetails?.order?.pnr || ""}
+            date={reservationDetails?.order?.payment_details?.date || ""}
+            paymentMethod={
+              reservationDetails?.order?.payment_details?.payment_method || ""
+            }
+            paidVia={`${
+              reservationDetails?.order?.payment_details?.paid_card_brand || ""
+            } **** ${reservationDetails?.order?.payment_details?.paid_via || ""}`}
+            paymentStatus={paymentStatus || ""}
+            total={`${amountWithCurrency(totalAmount)}`}
+            tax={`${amountWithCurrency(
+              reservationDetails?.order?.room?.pricing?.free?.tax,
+            )}`}
+            roomPrice={`${amountWithCurrency(
+              reservationDetails?.order?.room?.pricing?.free?.selling_price,
+            )}`}
+            reservationRoomType={`${reservationDetails?.params?.roomQuantity || ""} Room x ${nights} Nights`}
+            // RECEIPT DATA
+            reservationDetails={reservationDetails}
+            onPressCancelBtn={() => setOpen(true)}
+            showCancelBtn={isRefundableDateExpired}
+          />
+          <Divider />
+          <CancellationSection
+            cancellationPolicyText={
+              reservationDetails?.room?.refunds?.description || ""
+            }
+            reservationDetails={reservationDetails}
+          />
+          <Divider />
+          {reservationDetails?.order?.tariff_notes &&
+            reservationDetails?.order?.tariff_notes?.messages?.length > 0 && (
+              <>
+                <TariffNotesSection
+                  notes={reservationDetails?.order?.tariff_notes?.messages?.[0]}
+                />
+                <Divider />
+              </>
+            )}
 
-        {/* <MapSection
+          {/* <MapSection
           lat={reservationDetails?.order?.hotel?.location?.latitude as number}
           long={reservationDetails?.order?.hotel?.location?.longitude as number}
           hotelName={reservationDetails?.order?.hotel?.name || ""}
         />
         <Divider /> */}
 
-        <SupportSection />
-      </View>
+          <SupportSection />
+        </View>
 
-      <AppModal
-        visible={open}
-        // description="Are you sure you want to cancel this booking? This action cannot be undone."
-        confirmText="OK"
-        onClose={() => setOpen(false)}
-        showCloseIcon={true}
-      >
-        <BookingRefundCard
-          type={refundType}
-          hotelName={
-            reservationDetails?.order?.hotel?.name?.toLowerCase() || ""
-          }
-          dateRange={`${formatDate(reservationDetails?.params?.checkInDate as string, "dd MMMM")} - ${formatDate(reservationDetails?.params?.checkOutDate as string, "dd MMMM yyyy")}`}
-          totalPrice={`${amountWithCurrency(totalAmount)}`}
-          roomPrice={`${amountWithCurrency(
-            reservationDetails?.order?.room?.pricing?.free?.selling_price,
-          )}`}
-          taxes={`${amountWithCurrency(
-            reservationDetails?.order?.room?.pricing?.free?.tax,
-          )}`}
-          cancellationFee={`${amountWithCurrency(!isRefundable ? totalAmount : isRefundableDateExpired ? refundAmount : 0)}`}
-          // @ts-expect-error
-          refundAmount={`${amountWithCurrency(!isRefundable ? 0 : isRefundableDateExpired ? refundTotalAmount - refundAmount : totalAmount)}`}
-          image={reservationDetails?.order?.hotel?.images?.[0] || ""}
-          refundUntilDate={formatDate(
-            reservationDetails?.order?.room?.refunds
-              ?.refundable_until_iso as string,
-            "MMM d",
-          )}
-          isLoadingCancel={false}
-          onCancel={() => ""}
-          onKeep={() => ""}
-        />
-      </AppModal>
+        <AppModal
+          visible={open}
+          // description="Are you sure you want to cancel this booking? This action cannot be undone."
+          confirmText="OK"
+          onClose={() => setOpen(false)}
+          showCloseIcon={true}
+        >
+          <BookingRefundCard
+            type={refundType}
+            hotelName={
+              reservationDetails?.order?.hotel?.name?.toLowerCase() || ""
+            }
+            dateRange={`${formatDate(reservationDetails?.params?.checkInDate as string, "dd MMMM")} - ${formatDate(reservationDetails?.params?.checkOutDate as string, "dd MMMM yyyy")}`}
+            totalPrice={`${amountWithCurrency(totalAmount)}`}
+            roomPrice={`${amountWithCurrency(
+              reservationDetails?.order?.room?.pricing?.free?.selling_price,
+            )}`}
+            taxes={`${amountWithCurrency(
+              reservationDetails?.order?.room?.pricing?.free?.tax,
+            )}`}
+            cancellationFee={`${amountWithCurrency(!isRefundable ? totalAmount : isRefundableDateExpired ? refundAmount : 0)}`}
+            // @ts-expect-error
+            refundAmount={`${amountWithCurrency(!isRefundable ? 0 : isRefundableDateExpired ? refundTotalAmount - refundAmount : totalAmount)}`}
+            image={reservationDetails?.order?.hotel?.images?.[0] || ""}
+            refundUntilDate={formatDate(
+              reservationDetails?.order?.room?.refunds
+                ?.refundable_until_iso as string,
+              "MMM d",
+            )}
+            isLoadingCancel={false}
+            onCancel={() => ""}
+            onKeep={() => ""}
+          />
+        </AppModal>
+      </ThemedView>
     </ScrollView>
   );
 }

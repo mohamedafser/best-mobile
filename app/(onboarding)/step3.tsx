@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Text, TextInput, View } from "react-native";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
-import { useColorScheme } from "@/hooks/use-color-scheme.web";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import {
   setFamilyEmailOne,
   setFamilyEmailThree,

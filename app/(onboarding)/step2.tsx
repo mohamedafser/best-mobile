@@ -1,6 +1,6 @@
 import { CountdownTimer, OTPInput } from "@/components";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
-import { useColorScheme } from "@/hooks/use-color-scheme.web";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { showErrorToast } from "@/lib/utils/toast";
 import {
   resendOtpThunk,

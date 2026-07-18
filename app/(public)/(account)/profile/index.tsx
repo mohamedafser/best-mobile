@@ -96,11 +96,10 @@ export default function ProfileScreen() {
     <ScrollView
       contentContainerStyle={{
         padding: 16,
-        paddingTop: 65,
         paddingBottom: 48,
-        backgroundColor: C.surfaceCard,
         flex: 1,
       }}
+      style={{ backgroundColor: C.surfacePage }}
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
     >

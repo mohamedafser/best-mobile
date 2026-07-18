@@ -1,10 +1,5 @@
 import Loader from "@/components/loader";
-// import {
-//   DarkTheme,
-//   DefaultTheme,
-//   ThemeProvider,
-// } from "@react-navigation/native";
-import { router, Stack, useSegments } from "expo-router";
+import { Redirect, Stack, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import {
@@ -18,12 +13,14 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 
 import AppInitializer from "@/components/app-initializer";
+import ThemeInitializer from "@/components/theme-initializer";
+import { ThemedView } from "@/components/themed-view";
 import { Colors } from "@/constants/theme";
 import { useAppSelector } from "@/hooks/redux";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 import { persistor, store } from "@/store";
 import { StatusBar } from "expo-status-bar";
-import { useColorScheme } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 
 // Disable Reanimated strict mode warning (caused by internal hooks accessing shared values during render)
@@ -34,61 +31,57 @@ configureReanimatedLogger({
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
+function getAuthRedirectPath(
+  isAuthenticated: boolean,
+  isOnboardingComplete: number | undefined,
+  isEmailVerified: boolean | undefined,
+  segments: string[],
+): string | null {
+  const firstSegment = segments[0];
+  const inPublicGroup = firstSegment === "(public)";
+  const inOnboardingGroup = firstSegment === "(onboarding)";
+  const inVerifyEmailGroup = firstSegment === "(verifyEmail)";
+  const inAuthGroup = firstSegment === "(auth)";
+
+  if (!isAuthenticated) {
+    return inAuthGroup ? null : "/(auth)/signin";
+  }
+
+  if (!isOnboardingComplete) {
+    return inOnboardingGroup ? null : "/(onboarding)";
+  }
+
+  if (!isEmailVerified) {
+    return inVerifyEmailGroup ? null : "/(verifyEmail)";
+  }
+
+  return inPublicGroup ? null : "/(public)";
+}
+
 function AuthGate() {
   const segments = useSegments();
 
   const { isAuthenticated, user } = useAppSelector((state) => state.auth);
   const colorScheme = useColorScheme();
+  const insets = useSafeAreaInsets();
 
-  useEffect(() => {
-    const firstSegment = segments[0] as string | undefined;
-    const inPublicGroup = firstSegment === "(public)";
-    const inOnboardingGroup = firstSegment === "(onboarding)";
-    const inVerifyEmailGroup = firstSegment === "(verifyEmail)";
-    const inAuthGroup = firstSegment === "(auth)";
-
-    const safeRedirect = (path: string) => {
-      setTimeout(() => {
-        router.replace(path as any);
-      }, 0);
-    };
-
-    if (!isAuthenticated) {
-      // Unauthenticated users must be restricted to the auth group
-      if (!inAuthGroup) {
-        safeRedirect("/(auth)/signin");
-      }
-    } else {
-      // Authenticated users
-      if (!user?.is_onboarding_complete) {
-        // Must complete onboarding first
-        if (!inOnboardingGroup) {
-          safeRedirect("/(onboarding)");
-        }
-      } else if (!user?.is_email_verified) {
-        // Must verify email next
-        if (!inVerifyEmailGroup) {
-          safeRedirect("/(verifyEmail)");
-        }
-      } else {
-        // Fully authenticated, onboarded, and verified users go to the main area (public)
-        if (!inPublicGroup) {
-          safeRedirect("/(public)");
-        }
-      }
-    }
-  }, [
+  const redirectPath = getAuthRedirectPath(
     isAuthenticated,
-    segments,
     user?.is_onboarding_complete,
     user?.is_email_verified,
-  ]);
+    segments,
+  );
+
+  if (redirectPath) {
+    return <Redirect href={redirectPath as any} />;
+  }
 
   return (
-    <SafeAreaView
+    <ThemedView
       className="flex-1 pt-0"
       style={{
-        backgroundColor: Colors[colorScheme as "dark" | "light"].background,
+        backgroundColor: Colors[colorScheme as "dark" | "light"].surfacePage,
+        paddingTop: insets.top,
       }}
     >
       <Stack
@@ -97,10 +90,47 @@ function AuthGate() {
         }}
       ></Stack>
       <StatusBar style="auto" />
-    </SafeAreaView>
+    </ThemedView>
   );
 }
+// function AuthGate() {
+//   const segments = useSegments();
 
+//   const { isAuthenticated, user } = useAppSelector((state) => state.auth);
+//   const colorScheme = useColorScheme();
+
+//   const redirectPath = getAuthRedirectPath(
+//     isAuthenticated,
+//     user?.is_onboarding_complete,
+//     user?.is_email_verified,
+//     segments,
+//   );
+
+//   if (redirectPath) {
+//     return <Redirect href={redirectPath as any} />;
+//   }
+
+//   return (
+//     <ThemedView
+//       className="flex-1"
+//       style={{
+//         backgroundColor: Colors[colorScheme as "dark" | "light"].surfacePage,
+//       }}
+//     >
+//       <Stack
+//         screenOptions={{
+//           headerShown: false,
+//           contentStyle: {
+//             backgroundColor:
+//               Colors[colorScheme as "dark" | "light"].surfacePage,
+//           },
+//         }}
+//       />
+
+//       <StatusBar style="auto" />
+//     </ThemedView>
+//   );
+// }
 export default function RootLayout() {
   const [appIsReady, setAppIsReady] = useState(false);
 
@@ -131,6 +161,7 @@ export default function RootLayout() {
     <Provider store={store}>
       <PersistGate persistor={persistor} loading={<Loader />}>
         <AppInitializer />
+        <ThemeInitializer />
         <AuthGate />
         <Toast />
       </PersistGate>

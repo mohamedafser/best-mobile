@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import { useThemeColor } from "@/hooks/use-theme-color";
 import { Text, TextProps } from "react-native";
 
@@ -10,13 +11,16 @@ export type ThemedTextProps = TextProps & {
     | "defaultSemiBold"
     | "subtitle"
     | "link"
-    | "xsSmall";
+    | "xsSmall"
+    | "2Xl"
+    | "2XlBold"
+    | "3xlBold";
 };
 
 export function ThemedText({
   className = "",
-  lightColor,
-  darkColor,
+  lightColor = Colors.light.gray100,
+  darkColor = Colors.dark.gray100,
   type = "default",
   style,
   ...rest
@@ -30,6 +34,9 @@ export function ThemedText({
     subtitle: "text-xl font-bold",
     link: "text-base leading-[30px] text-[#0a7ea4]",
     xsSmall: "text-xs",
+    "2Xl": "text-2xl",
+    "2XlBold": "text-2xl font-bold",
+    "3xlBold": "text-3xl font-bold",
   };
 
   return (

@@ -1,3 +1,4 @@
+import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { Colors } from "@/constants/theme";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
@@ -35,7 +36,7 @@ const TripCard = ({
   return (
     <TouchableOpacity
       activeOpacity={0.9}
-      className={`border rounded-[20px] mb-6 overflow-hidden shadow-lg ${
+      className={`rounded-[20px] mb-6 overflow-hidden shadow-lg ${
         isCancelled ? "opacity-60" : ""
       }`}
       style={{
@@ -46,7 +47,6 @@ const TripCard = ({
         shadowOpacity: 0.3,
         shadowRadius: 8,
         backgroundColor: Colors[colorScheme as "dark" | "light"]?.surfaceCard,
-        borderColor: Colors[colorScheme as "dark" | "light"]?.gray400,
       }}
       onPress={() => router.push(`/trip-details/${id}`)}
     >
@@ -117,14 +117,7 @@ const TripCard = ({
             <Text className="text-[#727687] text-[10px] font-black uppercase tracking-widest mb-1">
               TOTAL
             </Text>
-            <Text
-              className="text-lg font-bold"
-              style={{
-                color: Colors[colorScheme as "dark" | "light"]?.gray900,
-              }}
-            >
-              {price}
-            </Text>
+            <ThemedText className="text-lg font-bold">{price}</ThemedText>
           </View>
         </View>
 

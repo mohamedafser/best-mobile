@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
+import { ThemedText } from "./themed-text";
 
 export type Contact = {
   address?: string;
@@ -44,10 +45,10 @@ const Address: React.FC<AddressProps> = ({ contact }) => {
         style={{ marginTop: 2 }}
       />
 
-      <Text className="ml-2 flex-1 text-xs capitalize text-zinc-700">
+      <ThemedText className="ml-2 flex-1 text-xs capitalize text-zinc-700">
         {address}
         {contact.zip_code ? ` - ${contact.zip_code}` : ""}
-      </Text>
+      </ThemedText>
     </View>
   );
 };
