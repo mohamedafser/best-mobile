@@ -5,7 +5,9 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { createMigrate, persistReducer, persistStore } from "redux-persist";
 
 import authReducer from "./slice/authSlice";
+import citiesReducer from "./slice/cities.slice";
 import countriesReducer from "./slice/countries-slice";
+import hotelDetailsReducer from "./slice/hotel-details.slice";
 import onboardingReducer from "./slice/onboarding-slice";
 import referralsReducer from "./slice/referrals.slice";
 import reservationReducer from "./slice/reservation.slice";
@@ -24,6 +26,8 @@ const rootReducer = combineReducers({
   referrals: referralsReducer,
   reservation: reservationReducer,
   theme: themeReducer,
+  cities: citiesReducer,
+  hotelDetails: hotelDetailsReducer,
 });
 
 const migrations: any = {

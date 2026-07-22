@@ -1,7 +1,7 @@
 import Loader from "@/components/loader";
 import { Redirect, Stack, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   configureReanimatedLogger,
   ReanimatedLogLevel,
@@ -20,6 +20,7 @@ import { useAppSelector } from "@/hooks/redux";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import { persistor, store } from "@/store";
 import { StatusBar } from "expo-status-bar";
+import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 
@@ -93,55 +94,29 @@ function AuthGate() {
     </ThemedView>
   );
 }
-// function AuthGate() {
-//   const segments = useSegments();
 
-//   const { isAuthenticated, user } = useAppSelector((state) => state.auth);
-//   const colorScheme = useColorScheme();
+function BootLoader({ onReady }: { onReady?: () => void }) {
+  return (
+    <View style={styles.loaderOverlay} onLayout={onReady}>
+      <Loader />
+    </View>
+  );
+}
 
-//   const redirectPath = getAuthRedirectPath(
-//     isAuthenticated,
-//     user?.is_onboarding_complete,
-//     user?.is_email_verified,
-//     segments,
-//   );
-
-//   if (redirectPath) {
-//     return <Redirect href={redirectPath as any} />;
-//   }
-
-//   return (
-//     <ThemedView
-//       className="flex-1"
-//       style={{
-//         backgroundColor: Colors[colorScheme as "dark" | "light"].surfacePage,
-//       }}
-//     >
-//       <Stack
-//         screenOptions={{
-//           headerShown: false,
-//           contentStyle: {
-//             backgroundColor:
-//               Colors[colorScheme as "dark" | "light"].surfacePage,
-//           },
-//         }}
-//       />
-
-//       <StatusBar style="auto" />
-//     </ThemedView>
-//   );
-// }
 export default function RootLayout() {
   const [appIsReady, setAppIsReady] = useState(false);
+  const splashHidden = useRef(false);
+
+  const hideSplash = useCallback(() => {
+    if (splashHidden.current) return;
+    splashHidden.current = true;
+    SplashScreen.hideAsync().catch(() => {});
+  }, []);
 
   useEffect(() => {
     async function prepare() {
       try {
-        // Let splash screen stay briefly, then hide it and transition to our custom react loader
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        await SplashScreen.hideAsync();
-
-        // Let the custom loader show for a short time to finish initial setup/loading
+        // Keep custom loader visible briefly while app tree mounts / rehydrates
         await new Promise((resolve) => setTimeout(resolve, 2000));
       } catch (e) {
         console.warn(e);
@@ -153,18 +128,31 @@ export default function RootLayout() {
     prepare();
   }, []);
 
-  if (!appIsReady) {
-    return <Loader />;
-  }
-
   return (
     <Provider store={store}>
-      <PersistGate persistor={persistor} loading={<Loader />}>
-        <AppInitializer />
-        <ThemeInitializer />
-        <AuthGate />
-        <Toast />
+      <PersistGate persistor={persistor} loading={null}>
+        {(isRehydrated) => (
+          <View style={styles.root}>
+            <AppInitializer />
+            <ThemeInitializer />
+            <AuthGate />
+            <Toast />
+            {(!isRehydrated || !appIsReady) && (
+              <BootLoader onReady={hideSplash} />
+            )}
+          </View>
+        )}
       </PersistGate>
     </Provider>
   );
 }
+
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
+  loaderOverlay: {
+    ...StyleSheet.absoluteFill,
+    zIndex: 100,
+  },
+});

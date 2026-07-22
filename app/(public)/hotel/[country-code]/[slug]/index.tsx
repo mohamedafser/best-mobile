@@ -1,8 +1,7 @@
 import { MaterialIcons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
-  Dimensions,
-  FlatList,
+  ActivityIndicator,
   Image,
   ScrollView,
   StatusBar,
@@ -11,7 +10,10 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+
+import Gallery from "@/components/gallery";
+import LightboxGallery from "@/components/lightbox-gallery";
+import { useHotelDetails } from "./use-hotel-details";
 
 // --- Types ---
 interface Room {
@@ -21,12 +23,6 @@ interface Room {
   price: string;
   image: string;
 }
-
-// --- Mock Data ---
-const GALLERY = [
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuAMwQ4icsy-jBuK0ord8P_wnxHwa9TSolbJPWr5mCqS5jPZt_3ruITORuNOwT_gGd5A8lndAKINpyY9VSbyNUkGlg4f3SIw8yJX-oacklChewKCylCQP9rDuGrkbmxGRV0tH8pOF7sUbnoCSxHcebpiKwpaNxIaEb-mwGFJbq_D3RH2MCXIOi98fJyLwfrmJXleXvyElYHAYoB1CkKUAvHKbF8VXi4QlyypsRuSA6V75I5hOvLi78WN5oYqxerbBNxR8GWIwj0n9bM",
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuDczqZdOJDGlUtSxjFLZcqHasCGqN7cCiAllZ6BWl8XVTLIaW1wOEDB2o4p7Q7Uc3-2ONrqsDkygpEyZbbFhTYeUerdfjbzSF90FgXZS1-wWxAvgWhIkcInITlvWgHjebstOQzWYhDAII7qz5k7qldFYDDDrK63alALVQhQbi64Q8v6x0P4lRJVeSnY2-fY3H9ja26EwswXp5dKz4Ax9xrwblVGgRTGQUUinlHdBmTa2pVa1IApnmGmcDcXrCHB50myS2iRZ6ladc",
-];
 
 const ROOMS: Room[] = [
   {
@@ -47,9 +43,93 @@ const ROOMS: Room[] = [
   },
 ];
 
+const AMENITY_ICONS: Record<string, keyof typeof MaterialIcons.glyphMap> = {
+  pool: "pool",
+  wifi: "wifi",
+  gym: "fitness-center",
+  fitness: "fitness-center",
+  restaurant: "restaurant",
+  dining: "restaurant",
+  parking: "local-parking",
+  spa: "spa",
+};
+
 const HotelDetailsScreen: React.FC = () => {
-  const [activeSlide, setActiveSlide] = useState(0);
+  const { details, loading, error, refetch } = useHotelDetails();
   const [selectedRoom, setSelectedRoom] = useState("1");
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+
+  const galleryImages = useMemo(() => details?.media ?? [], [details?.media]);
+
+  // const locationLabel = useMemo(() => {
+  //   if (!details?.contact) return "";
+
+  //   return [details.contact.city, details.contact.country]
+  //     .filter(Boolean)
+  //     .join(", ");
+  // }, [details?.contact]);
+
+  const addressLabel = details?.contact?.address;
+
+  const amenities = useMemo(() => {
+    const list = details?.amenities ?? [];
+    if (!list.length) {
+      return [
+        { icon: "pool" as const, label: "Pool" },
+        { icon: "wifi" as const, label: "Free WiFi" },
+        { icon: "fitness-center" as const, label: "Gym" },
+        { icon: "restaurant" as const, label: "Dining" },
+      ];
+    }
+
+    return list.slice(0, 4).map((item) => {
+      const key = item.name?.toLowerCase() || item.code?.toLowerCase() || "";
+      const matchedKey = Object.keys(AMENITY_ICONS).find((iconKey) =>
+        key.includes(iconKey),
+      );
+
+      return {
+        icon: matchedKey ? AMENITY_ICONS[matchedKey] : ("hotel" as const),
+        label: item.name || item.code,
+      };
+    });
+  }, [details?.amenities]);
+
+  const openLightbox = (index: number) => {
+    setLightboxIndex(index);
+    setIsLightboxOpen(true);
+  };
+
+  if (loading && !details) {
+    return (
+      <SafeAreaView
+        edges={["top"]}
+        className="flex-1 items-center justify-center bg-[#fffbf9]"
+      >
+        <ActivityIndicator size="large" color="#ff7a45" />
+      </SafeAreaView>
+    );
+  }
+
+  if (error && !details) {
+    return (
+      <SafeAreaView
+        edges={["top"]}
+        className="flex-1 items-center justify-center bg-[#fffbf9] px-6"
+      >
+        <Text className="mb-4 text-center text-base text-[#424656]">
+          {error}
+        </Text>
+        <TouchableOpacity
+          onPress={refetch}
+          className="rounded-xl bg-[#ff7a45] px-5 py-3"
+        >
+          <Text className="font-bold text-white">Try again</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-[#fffbf9]">
@@ -67,65 +147,56 @@ const HotelDetailsScreen: React.FC = () => {
         }}
       >
         {/* Gallery Section */}
-        <View className="relative h-[350px]">
-          <FlatList
-            data={GALLERY}
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            onMomentumScrollEnd={(e) => {
-              setActiveSlide(
-                Math.round(e.nativeEvent.contentOffset.x / SCREEN_WIDTH),
-              );
-            }}
-            renderItem={({ item }) => (
-              <Image
-                source={{ uri: item }}
-                style={{ width: SCREEN_WIDTH }}
-                className="h-full"
-              />
-            )}
-            keyExtractor={(_, index) => index.toString()}
+        <View className="px-4 pt-2">
+          <Gallery
+            medias={galleryImages}
+            loading={loading && !galleryImages.length}
+            height={320}
+            onImagePress={openLightbox}
           />
-          <View className="absolute bottom-4 right-4 bg-black/50 px-3 py-1 rounded-full">
-            <Text className="text-white text-xs font-bold">
-              {activeSlide + 1}/5 Photos
-            </Text>
-          </View>
         </View>
 
         {/* Title & Info */}
         <View className="px-5 pt-6">
           <View className="flex-row justify-between items-start">
-            <View>
+            <View className="flex-1 pr-3">
               <Text className="text-2xl font-bold text-[#1b1c1c]">
-                The Grand Regency Palace
+                {details?.name || "Hotel"}
               </Text>
               <View className="flex-row items-center gap-1 mt-1">
                 <MaterialIcons name="star" size={16} color="#725500" />
-                <Text className="font-bold text-sm">4.9</Text>
-                <Text className="text-[#727687] text-sm">(1,248 Reviews)</Text>
+                <Text className="font-bold text-sm">
+                  {details?.local_rating || "-"}
+                </Text>
+                {/* {locationLabel ? (
+                  <Text className="text-[#727687] text-sm">
+                    • {locationLabel}
+                  </Text>
+                ) : null} */}
               </View>
             </View>
             <TouchableOpacity className="w-10 h-10 rounded-full bg-[#f5eeeb] items-center justify-center border border-gray-200">
-              <MaterialIcons name="favorite-border" size={22} color="#424656" />
+              <MaterialIcons
+                name={details?.is_in_wishlist ? "favorite" : "favorite-border"}
+                size={22}
+                color={details?.is_in_wishlist ? "#ff7a45" : "#424656"}
+              />
             </TouchableOpacity>
           </View>
 
           {/* Location Card */}
           <TouchableOpacity className="mt-4 p-4 bg-white rounded-xl shadow-sm border border-gray-100 flex-row items-center gap-4">
-            <Image
-              source={{
-                uri: "https://lh3.googleusercontent.com/aida-public/AB6AXuCBwx4JDHVuJepd5FMPDiM38KqqiobDFR4uMjfalWsLkTjqo-z2eVinWVVUxB4WyQE5Gqj5zqAEgFPneX6QEQ-DU_y2apZVM8J0azmgKQztwPDW_e57xy4yPxPIIicQDRm3H2cfpqeTTPMm3UVqq6pTlgI5NpuSET3BbkG0pEpEoeWhl95FxBk-m0UhxBX6O58Sr4JS0T1tTCX8WdmXE4-tjA4Zj_srb-9uSyaBB2HADi31aAdM9CkpwcBkFyx9P3WGU5MVTCBV7No",
-              }}
-              className="w-16 h-16 rounded-lg"
-            />
+            <View className="h-16 w-16 items-center justify-center rounded-lg bg-[#f5eeeb]">
+              <MaterialIcons name="location-on" size={28} color="#ff7a45" />
+            </View>
             <View className="flex-1">
               <Text className="font-bold text-lg text-[#1b1c1c]">
-                Central Plaza, District 1
+                {addressLabel || "Location unavailable"}
               </Text>
               <Text className="text-sm text-[#727687]">
-                2.5 km from City Center
+                {[details?.contact?.city, details?.state?.name]
+                  .filter(Boolean)
+                  .join(", ") || "View on map"}
               </Text>
             </View>
             <MaterialIcons name="chevron-right" size={24} color="#ff7a45" />
@@ -186,26 +257,16 @@ const HotelDetailsScreen: React.FC = () => {
         <View className="px-5 mt-8">
           <Text className="text-xl font-bold mb-2">About this hotel</Text>
           <Text className="text-base text-[#424656] leading-6">
-            Experience unparalleled luxury in the heart of the city. The Grand
-            Regency combines historic charm with modern sophistication.
+            {details?.description || "No description available."}
           </Text>
 
           <View className="flex-row justify-between mt-6">
-            {[
-              { icon: "pool", label: "Pool" },
-              { icon: "wifi", label: "Free WiFi" },
-              { icon: "fitness-center", label: "Gym" },
-              { icon: "restaurant", label: "Dining" },
-            ].map((item, idx) => (
-              <View key={idx} className="items-center w-1/4">
+            {amenities.map((item, idx) => (
+              <View key={`${item.label}-${idx}`} className="items-center w-1/4">
                 <View className="w-12 h-12 rounded-xl bg-[#f5eeeb] items-center justify-center mb-1">
-                  <MaterialIcons
-                    name={item.icon as any}
-                    size={24}
-                    color="#424656"
-                  />
+                  <MaterialIcons name={item.icon} size={24} color="#424656" />
                 </View>
-                <Text className="text-[10px] font-bold uppercase text-[#727687]">
+                <Text className="text-[10px] font-bold uppercase text-[#727687] text-center">
                   {item.label}
                 </Text>
               </View>
@@ -265,6 +326,15 @@ const HotelDetailsScreen: React.FC = () => {
           </Text>
         </TouchableOpacity>
       </View>
+
+      {isLightboxOpen && galleryImages.length > 0 && (
+        <LightboxGallery
+          images={galleryImages}
+          current={lightboxIndex}
+          onChange={setLightboxIndex}
+          onClose={() => setIsLightboxOpen(false)}
+        />
+      )}
     </SafeAreaView>
   );
 };
